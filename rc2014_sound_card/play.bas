@@ -10,6 +10,42 @@
 95 FOR n=&HD000 to &HD02F: print HEX$(n);"=";HEX$(PEEK(N)): next n
 100 STOP
 
+1000 REM Hall of the Mountain King
+1010 REM channel 0
+1020 DATA "O5T120N3e#fgabg5b3#a#f5#a3af5aN3e#fgabgbENDbgb7D"
+1030 DATA ""
+1040 REM channel 1
+1050 DATA "O5V6N3b#C#DE#F#D5#FN3G#D5G3#F#D5#FN3b#C#DE#F#D5#FN3G#D5G7#F"
+1070 DATA ""
+1080 REM channel 2
+1090 DATA "O5V6N3Dbgb7DN5&E7&N5&E7&N3e#fgabgbE"
+1100 DATA ""
+
+2000 REM Blinding Light
+2010 REM channel 0
+2020 DATA "T168O5W0X8000U7F6F3$EF5G5C6$EN7F6F3$EF5G5C6$EN3$B5G5F6$E3$B"
+2030 DATA "5GF$E3FX12000N9F"
+2040 DATA ""
+2050 REM channel 1
+2060 DATA "O4V5N9ff9gg9ggg"
+2070 DATA ""
+2080 REM channel 2
+2090 DATA "O4V5N9$a$a9CC9$b$b$b"
+2100 DATA ""
+
+3000 REM Demo tune
+3010 REM channel 0
+3020 DATA "W0X4000U7&&&&&&&&O4N1gggg3b1bbDDDD3EGCCE1EGE3G3A1GE4G3EG"
+3030 DATA "EE1D3E1bX5003D"
+3040 DATA ""
+3050 REM channel 1
+3060 DATA "O4V8N3gggggggggggggef#fgggggggggggggef#fggggggggcccccccc"
+3070 DATA "ggggggg"
+3080 DATA ""
+3090 REM channel 2
+3100 DATA "O4V8N3gggggggggggggef#fgggggggggggggef#fggggggggcccccccc"
+3110 DATA "ggggggg"
+3120 DATA ""
 
 8000 REM Routine to play
 8010 LET mb=&HD100: LET c=0
