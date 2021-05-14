@@ -25,6 +25,14 @@ AY_WAIT_UNIT:	EQU 0x0042	; Unit of duration (calibrate to clock)
 	
 	org 0xC000
 	
+	IFDEF RC2014
+	jp START
+
+EXIT_CODE:
+	db 0                    ; exit code   (ORG + 3)
+	ENDIF
+
+
 PLAY_INFO:
 	dw CHANNEL_0_INFO	; Address of Channel 0 info
 	dw CHANNEL_1_INFO	; Address of Channel 1 info
@@ -205,7 +213,13 @@ DONE:	call SND_OFF
 	IFDEF ZXSPECTRUM
 	ret			; Return to BASIC
 	ELSE
+	IFDEF RC2014
+	ld hl, EXIT_CODE        ; Return to caller, set exit code to "OK"
+	ld (hl), 0
+	ret
+	ELSE
 	jp (iy)			; Return to FORTH
+	ENDIF
 	ENDIF
 
 	
@@ -985,8 +999,12 @@ NOTES:
 	IFDEF ZXSPECTRUM
 	INCLUDE "spectrum_note_table.asm"	
 	ELSE
+	IFDEF RC2014
+	INCLUDE "rc2014_note_table.asm"
+	ELSE
 	INCLUDE "minstrel_note_table.asm"
-	ENDIF	
+	ENDIF
+	ENDIF
 
 	;; Abort routines for different errors
 ERR_NUM:
@@ -997,8 +1015,14 @@ ERR_NUM:
 	rst 0x08
 	db #0a			; Number out of range
 	ELSE
+	IFDEF RC2014
+	ld hl, EXIT_CODE
+	ld (hl), 2
+	ret
+	ELSE
 	rst 0x20
 	db #08			; Overflow in floating-point
+	ENDIF
 	ENDIF
 ERR_NOTE:
 	call SND_OFF
@@ -1008,8 +1032,14 @@ ERR_NOTE:
 	rst 0x08
 	db #26			; Invalid note name
 	ELSE
+	IFDEF RC2014
+	ld hl, EXIT_CODE        ; set exit code for "Invalid note"
+	ld (hl), 1
+	ret
+	ELSE
 	rst 0x20
 	db #0c			; Word not defined
+	ENDIF
 	ENDIF
 
 PLAY_CHAN:	EQU 0x00

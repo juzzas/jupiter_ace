@@ -1,5 +1,5 @@
 ASM = sjasmplus
-AFLAGS = --sym=play.sym --raw=play.bin # -DZXSPECTRUM
+AFLAGS = --sym=play.sym --raw=play.bin -DRC2014 # -DZXSPECTRUM
 
 ifeq ($(OS),Windows_NT)
 	ERASE = erase
