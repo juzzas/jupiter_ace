@@ -1,5 +1,5 @@
-10 REM Created by Justin Skists
-20 REM Based on "rc2014 sound card" PLAY by George Beckett
+10 REM BASIC handler for "rc2014 sound card" PLAY by George Beckett
+20 REM Created by Justin Skists (@jskists)
 40 PRINT "loading machine code"
 50 GOSUB 9000 : REM Initialise PLAY routine
 55 PRINT "loading machine code...done"
@@ -57,26 +57,32 @@
 8070 RETURN
 
 8100 POKE &HD000+(16*c), c: REM set channel number
-8110 DOKE &HD001+(16*c), mb: REM set address of start
-8120 DOKE &HD003+(16*c), 0: REM reset current position
-8130 PRINT "channel ";c;": ";x$
-8190 IF LEN(x$)=0 THEN goto 8300
+8110 POKE &HD001+(16*c), mb AND 255: REM set LSB addr of start (LSB)
+8120 POKE &HD002+(16*c), (mb / 256) AND 255: REM set addr of start (MSB)
+8130 POKE &HD003+(16*c), 0: REM LSB reset current position
+8140 POKE &HD004+(16*c), 0: REM MSB reset current position
+8150 PRINT "channel ";c;": ";x$
 
-8200 FOR n=1 TO LEN(x$)
-8210 LET a=ASC(MID$(x$, n, 1))
-8220 PRINT hex$(mb);" -> ";hex$(a)
-8230 POKE mb, a
-8240 LET mb=mb+1
-8250 NEXT n
+8200 IF LEN(x$)=0 THEN goto 8300
+8210 FOR n=1 TO LEN(x$)
+8220 LET a=ASC(MID$(x$, n, 1))
+8230 PRINT hex$(mb);" -> ";hex$(a)
+8240 POKE mb, a
+8250 LET mb=mb+1
+8260 NEXT n
 
-8300 DOKE &HD005+(16*c), mb: REM set address of end
-8310 DOKE &HD007+(16*c), &HFFFF: REM default note duration
-8320 DOKE &HD009+(16*c), &H0000: REM current note counter
-8330 POKE &HD00B+(16*c), &H30: REM octave 5 by default
-8340 POKE &HD00C+(16*c), &H0F: REM volume
+8300 POKE &HD005+(16*c), mb AND 255: REM set addr of end (LSB)
+8310 POKE &HD006+(16*c), (mb / 256) AND 255: REM set addr of end (MSB)
+8320 POKE &HD007+(16*c), 255: REM default note duration (LSB)
+8330 POKE &HD008+(16*c), 255: REM default note duration (MSB)
+8340 POKE &HD009+(16*c), 0: REM current note counter (LSB)
+8350 POKE &HD00A+(16*c), 0: REM current note counter (MSB)
+8360 POKE &HD00B+(16*c), &H30: REM octave 5 by default
+8370 POKE &HD00C+(16*c), &H0F: REM volume
 
-8400 DOKE &HC004+(2*c), &HD000+(16*c): REM set channel c 
-8410 RETURN
+8400 POKE &HC004+(2*c), (16*c): REM set channel c
+8410 POKE &HC005+(2*c), &HD0: REM set channel c
+8420 RETURN
 
 
 9000 REM Routine to load machine code
@@ -90,10 +96,9 @@
 9070 GOTO 9030
 
 9100 REM Set location of USR address (&H8049 for 32K BASIC)
-9105 LET mb=&HC000
-9110 DOKE &H8049, mb
-9120 RETURN
-
+9110 POKE &H8049, &H00: REM LSB of machine code origin
+9120 POKE &H804A, &HC0: REM MSB of machine code origin
+9130 RETURN
 
 9200 REM PLAY.BIN
 9210 DATA 195,10,192,0,244,196,1,197,14,197,243,253
