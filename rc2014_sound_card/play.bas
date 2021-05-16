@@ -2,10 +2,9 @@
 20 REM Created by Justin Skists (@jskists)
 40 PRINT "loading machine code"
 50 GOSUB 9000 : REM Initialise PLAY routine
-55 PRINT "loading machine code...done"
-60 LET a$="cdefgabC&Cdagfedc"
-70 LET b$=""
-80 LET c$=""
+60 PRINT "loading machine code...done"
+70 PRINT "Playing Hall of the Mountain King"
+80 RESTORE 1000
 90 GOSUB 8000
 95 FOR n=&HD000 to &HD02F: print HEX$(n);"=";HEX$(PEEK(N)): next n
 100 STOP
@@ -48,28 +47,25 @@
 3120 DATA ""
 
 8000 REM Routine to play
-8010 LET mb=&HD100: LET c=0
-8020 LET x$=a$: GOSUB 8100
-8030 LET c=1
-8040 LET x$=b$: GOSUB 8100
-8050 LET c=2
-8060 LET x$=c$: GOSUB 8100
-8070 RETURN
+8010 LET mb=&HD100
+8020 FOR c=0 TO 2: GOSUB 8100: NEXT c
+8030 RETURN
 
 8100 POKE &HD000+(16*c), c: REM set channel number
 8110 POKE &HD001+(16*c), mb AND 255: REM set LSB addr of start (LSB)
 8120 POKE &HD002+(16*c), (mb / 256) AND 255: REM set addr of start (MSB)
 8130 POKE &HD003+(16*c), 0: REM LSB reset current position
 8140 POKE &HD004+(16*c), 0: REM MSB reset current position
-8150 PRINT "channel ";c;": ";x$
 
-8200 IF LEN(x$)=0 THEN goto 8300
-8210 FOR n=1 TO LEN(x$)
-8220 LET a=ASC(MID$(x$, n, 1))
-8230 PRINT hex$(mb);" -> ";hex$(a)
-8240 POKE mb, a
-8250 LET mb=mb+1
-8260 NEXT n
+8200 READ x$: IF LEN(x$)=0 THEN goto 8300
+8210 PRINT "channel ";c;": ";x$
+8220 FOR n=1 TO LEN(x$)
+8230 LET a=ASC(MID$(x$, n, 1))
+8240 PRINT hex$(mb);" -> ";hex$(a)
+8250 POKE mb, a
+8260 LET mb=mb+1
+8270 NEXT n
+8280 GOTO 8200
 
 8300 POKE &HD005+(16*c), mb AND 255: REM set addr of end (LSB)
 8310 POKE &HD006+(16*c), (mb / 256) AND 255: REM set addr of end (MSB)
